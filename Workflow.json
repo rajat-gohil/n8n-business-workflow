@@ -1,0 +1,150 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1WZcDczgRHionkIwrhjgDvsaVgqb7mbnLECobqoUjZro",
+          "mode": "list",
+          "cachedResultName": "Customer Ticker Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WZcDczgRHionkIwrhjgDvsaVgqb7mbnLECobqoUjZro/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tickets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WZcDczgRHionkIwrhjgDvsaVgqb7mbnLECobqoUjZro/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6d052b85-0a1b-4094-83bc-9e44849d40d1",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "DLKt0lf9GFnHupx0",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5014586b-0179-467e-a118-d0acb6225f9f",
+              "leftValue": "={{ $json.Priority }}",
+              "rightValue": "High",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "0735b5ef-7719-4b09-994a-b73337d5085b",
+              "leftValue": "={{ $json.Priority }}",
+              "rightValue": "Urgent",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "de8a0255-92b0-45e0-9226-49122fbab25e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "New Support Ticket - High Priority",
+        "emailType": "text",
+        "message": "=A new high-priority support ticket requires attention.\nTicket ID: {{ $json['Ticket ID'] }}\nCustomer: {{ $json.Customer }}\nIssue: {{ $json.Issue }}\nPriority: {{ $json.Priority }}\nStatus: {{ $json.Status }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "33012cfa-5bf1-4492-933c-97f6b73f53ba",
+      "name": "Send a message",
+      "webhookId": "ce7a7e5f-a7cf-4267-a103-4102e7870803",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gZoHM2PTejJrGOsY",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "233e5a28-00db-46fe-9712-9f9b3a276d12",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dff985fc0b5d2107675fde87624cf9743fb8e37729e03d70b0bdbe20602f304e"
+  },
+  "nodeGroups": [],
+  "id": "25C0IdHq7UMSVDzs",
+  "tags": []
+}
